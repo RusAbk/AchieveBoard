@@ -3,8 +3,9 @@
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
-      fixed
       app
+      absolute
+      temporary
     >
       <v-list>
         <v-list-item
