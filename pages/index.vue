@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="12" md="4" v-for="(person, i) in people" :key="i">
+      <v-col cols="12" md="4" v-for="(person, i) in $store.state.people" :key="i">
         <v-card>
           <v-card-title>{{person.name}}</v-card-title>
           <v-card-text>
@@ -11,28 +11,28 @@
                   <template v-slot:activator="{ on, attrs }">
                     <div
                       class="achievement-wrapper"
-                      :class="(+progress >= achievements[title].max ? 'active' : '')"
-                      :style="`background-color: ${achievements[title].color}`"
+                      :class="(+progress >= $store.state.achievements[title].max ? 'active' : '')"
+                      :style="`background-color: ${$store.state.achievements[title].color}`"
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <img :src="achievements[title].img" />
+                      <img :src="$store.state.achievements[title].img" />
                     </div>
                   </template>
-                  <strong>{{achievements[title].title}}</strong>
+                  <strong>{{$store.state.achievements[title].title}}</strong>
                   <br />
-                  <small class="grey--text text--lighten-4">{{achievements[title].description}}</small>
+                  <small class="grey--text text--lighten-4">{{$store.state.achievements[title].description}}</small>
                 </v-tooltip>
                 
                 <v-progress-linear
-                  v-if="+progress < achievements[title].max"
-                  :value="progress * 100 / achievements[title].max"
+                  v-if="+progress < $store.state.achievements[title].max"
+                  :value="progress * 100 / $store.state.achievements[title].max"
                   height="15"
                   color="green accent-2"
                   rounded
                   class="mt-2"
                 >
-                  <span>{{ Math.ceil( progress * 100 / achievements[title].max ) }}%</span>
+                  <span>{{ Math.ceil( progress * 100 / $store.state.achievements[title].max ) }}%</span>
                 </v-progress-linear>
               </v-col>
             </v-row>
@@ -75,24 +75,16 @@ export default {
     Logo,
     VuetifyLogo
   },
-  data() {
-    return {
-      docId: "",
-      table: [],
-      achievesInfoRows: 5,
-      achievements: {},
-      people: []
-    };
-  },
   methods: {
     getData() {
       this.$axios
         .get(
-          `https://spreadsheets.google.com/feeds/list/${this.docId}/od6/public/basic?alt=json`
+          `https://spreadsheets.google.com/feeds/list/${this.$store.state.docId}/od6/public/basic?alt=json`
         )
         .then(response => {
           // Парсим строки таблицы в виде объектов,
           // где ключ - название столбца, значение - значение ячейки
+          let table = [];
           for (let el of response.data.feed.entry) {
             let rowContent = JSON.parse(
               `{"${el.content.$t
@@ -101,25 +93,29 @@ export default {
                 .split(", ")
                 .join('", "')}"}`
             );
-            this.table.push(rowContent);
+            table.push(rowContent);
           }
+          this.$store.commit('setTableContent', table);
 
           // Парсим инфо об ачивках
-          for (let key in this.table[0]) {
+          let achievements = {};
+          for (let key in this.$store.state.table[0]) {
             if (key != "name") {
               let achievement = {};
-              achievement.title = this.table[0][key];
-              achievement.description = this.table[1][key];
-              achievement.img = this.table[2][key];
-              achievement.color = this.table[3][key];
-              achievement.max = this.table[4][key];
+              achievement.title = this.$store.state.table[0][key];
+              achievement.description = this.$store.state.table[1][key];
+              achievement.img = this.$store.state.table[2][key];
+              achievement.color = this.$store.state.table[3][key];
+              achievement.max = this.$store.state.table[4][key];
 
-              this.achievements[key] = achievement;
+              achievements[key] = achievement;
             }
           }
+          this.$store.commit('setAchievements', achievements);
 
           // Парсим данные о людях и представляем в удобной форме
-          let peoplePart = this.table.slice(this.achievesInfoRows);
+          let peoplePart = this.$store.state.table.slice(this.$store.state.achievesInfoRows);
+          let people = [];
           for (let row of peoplePart) {
             let person = {
               name: row.name,
@@ -130,13 +126,16 @@ export default {
                 person.achievements[key] = row[key];
               }
             }
-            this.people.push(person);
+            people.push(person);
           }
+          this.$store.commit('setPeople', people);
         });
     }
   },
   mounted() {
-    this.docId = window.location.search.slice(1);
+    let docId = window.location.search.slice(1);
+    this.$store.commit('setDocId', docId);
+
     this.getData();
   }
 };
