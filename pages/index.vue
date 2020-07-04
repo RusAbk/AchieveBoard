@@ -11,7 +11,7 @@
                   <template v-slot:activator="{ on, attrs }">
                     <div
                       class="achievement-wrapper"
-                      :class="(progress == 100 ? 'active' : '')"
+                      :class="(+progress >= achievements[title].max ? 'active' : '')"
                       :style="`background-color: ${achievements[title].color}`"
                       v-bind="attrs"
                       v-on="on"
@@ -25,14 +25,14 @@
                 </v-tooltip>
                 
                 <v-progress-linear
-                  v-if="progress < 100"
-                  :value="progress"
+                  v-if="+progress < achievements[title].max"
+                  :value="progress * 100 / achievements[title].max"
                   height="15"
                   color="green accent-2"
                   rounded
                   class="mt-2"
                 >
-                  <span>{{ Math.ceil(progress) }}%</span>
+                  <span>{{ Math.ceil( progress * 100 / achievements[title].max ) }}%</span>
                 </v-progress-linear>
               </v-col>
             </v-row>
@@ -79,7 +79,7 @@ export default {
     return {
       docId: "",
       table: [],
-      achievesInfoRows: 4,
+      achievesInfoRows: 5,
       achievements: {},
       people: []
     };
@@ -112,6 +112,7 @@ export default {
               achievement.description = this.table[1][key];
               achievement.img = this.table[2][key];
               achievement.color = this.table[3][key];
+              achievement.max = this.table[4][key];
 
               this.achievements[key] = achievement;
             }
