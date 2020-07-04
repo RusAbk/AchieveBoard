@@ -37,11 +37,11 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
     </v-app-bar>
-    <v-content class="blue lighten-5">
+    <v-main class="blue lighten-5">
       <v-container>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
     <v-footer
       :absolute="!fixed"
       app
@@ -60,14 +60,14 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
+          icon: 'mdi-poll',
+          title: 'Board',
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-format-list-bulleted-type',
+          title: 'All achievements',
+          to: '/list'
         }
       ],
       miniVariant: false,
