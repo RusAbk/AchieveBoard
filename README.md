@@ -5,6 +5,8 @@
 
 **It can be used in education to motivate your students or in project management to gamify some goals for your team**
 
+![Screenshot](https://raw.githubusercontent.com/Ruslanabk/AchieveBoard/master/screenshot.png)
+
 ## Google Sheets template
 You can get the template for your dashboard by following the link <https://docs.google.com/spreadsheets/d/1sD4pYr6rGQJbwb_HZ_20qfGu39jmlQDYdTtpCMbxMFs/edit?usp=sharing>
 
