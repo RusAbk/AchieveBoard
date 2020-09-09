@@ -7,23 +7,34 @@
           <v-card-text>
             <v-row>
               <v-col cols="3" v-for="(progress, title) in person.achievements" :key="title">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <div
-                      class="achievement-wrapper"
-                      :class="(+progress >= $store.state.achievements[title].max ? 'active' : '')"
-                      :style="`background-color: ${$store.state.achievements[title].color}`"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <img :src="$store.state.achievements[title].img" />
-                    </div>
-                  </template>
-                  <strong>{{$store.state.achievements[title].title}}</strong>
-                  <br />
-                  <small class="grey--text text--lighten-4">{{$store.state.achievements[title].description}}</small>
-                </v-tooltip>
-                
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div
+                        class="achievement-wrapper"
+                        :class="(+progress >= $store.state.achievements[title].max ? 'active' : '')"
+                        :style="`background-color: ${$store.state.achievements[title].color}`"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-badge 
+                          v-if="+progress >= $store.state.achievements[title].max * 2" 
+                          color="red" 
+                          :content="`x${Math.floor(+progress / $store.state.achievements[title].max)}`" 
+                          bottom overlap bordered>
+                          <img :src="$store.state.achievements[title].img" />
+                        </v-badge>
+                        <div v-else>
+                          <img :src="$store.state.achievements[title].img" />
+                        </div>
+                      </div>
+                    </template>
+                    <strong>{{$store.state.achievements[title].title}}</strong>
+                    <br />
+                    <small
+                      class="grey--text text--lighten-4"
+                    >{{$store.state.achievements[title].description}}</small>
+                  </v-tooltip>
+
                 <v-progress-linear
                   v-if="+progress < $store.state.achievements[title].max"
                   :value="progress * 100 / $store.state.achievements[title].max"
@@ -73,7 +84,7 @@ import VuetifyLogo from "~/components/VuetifyLogo.vue";
 export default {
   components: {
     Logo,
-    VuetifyLogo
+    VuetifyLogo,
   },
   methods: {
     getData() {
@@ -81,7 +92,7 @@ export default {
         .get(
           `https://spreadsheets.google.com/feeds/list/${this.$store.state.docId}/od6/public/basic?alt=json`
         )
-        .then(response => {
+        .then((response) => {
           // Парсим строки таблицы в виде объектов,
           // где ключ - название столбца, значение - значение ячейки
           let table = [];
@@ -95,7 +106,7 @@ export default {
             );
             table.push(rowContent);
           }
-          this.$store.commit('setTableContent', table);
+          this.$store.commit("setTableContent", table);
 
           // Парсим инфо об ачивках
           let achievements = {};
@@ -111,15 +122,17 @@ export default {
               achievements[key] = achievement;
             }
           }
-          this.$store.commit('setAchievements', achievements);
+          this.$store.commit("setAchievements", achievements);
 
           // Парсим данные о людях и представляем в удобной форме
-          let peoplePart = this.$store.state.table.slice(this.$store.state.achievesInfoRows);
+          let peoplePart = this.$store.state.table.slice(
+            this.$store.state.achievesInfoRows
+          );
           let people = [];
           for (let row of peoplePart) {
             let person = {
               name: row.name,
-              achievements: {}
+              achievements: {},
             };
             for (let key in row) {
               if (key != "name") {
@@ -128,15 +141,15 @@ export default {
             }
             people.push(person);
           }
-          this.$store.commit('setPeople', people);
+          this.$store.commit("setPeople", people);
         });
-    }
+    },
   },
   mounted() {
     let docId = window.location.search.slice(1);
-    this.$store.commit('setDocId', docId);
+    this.$store.commit("setDocId", docId);
 
     this.getData();
-  }
+  },
 };
 </script>
