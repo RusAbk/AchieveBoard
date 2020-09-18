@@ -8,6 +8,7 @@
     "start": "nuxt start",
     "export": "nuxt export",
     "serve": "nuxt serve",
+    "generate": "nuxt generate",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "dependencies": {
