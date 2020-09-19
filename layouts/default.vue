@@ -27,6 +27,8 @@
     <v-app-bar
       fixed
       app
+      dark
+      color="purple darken-4"
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn
@@ -37,7 +39,7 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
     </v-app-bar>
-    <v-main class="blue lighten-5">
+    <v-main class="purple lighten-5">
       <v-container>
         <nuxt />
       </v-container>
@@ -62,15 +64,15 @@ export default {
         {
           icon: 'mdi-poll',
           title: 'Board',
-          to: '/'
+          to: '/?' + this.$store.state.docId
         },
         {
           icon: 'mdi-format-list-bulleted-type',
           title: 'All achievements',
-          to: '/list'
+          to: '/list/?' + this.$store.state.docId
         }
       ],
-      miniVariant: false,
+      miniVariant: true,
       right: true,
       title: 'AchieveBoard',
       author: 'Ruslan Abkadirov'
