@@ -5,7 +5,7 @@
         <v-card outlined>
           <v-card-title>{{person.name}}</v-card-title>
           <v-card-text>
-            <v-row v-if="Object.keys(person.achievements).length > 1">
+            <v-row v-if="Object.keys(person.achievements).length > 0">
               <v-col cols="3" v-for="(progress, title) in person.achievements" :key="title">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">

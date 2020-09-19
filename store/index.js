@@ -30,7 +30,6 @@ const store = () => new Vuex.Store({
               .then((response) => {
                 // Парсим строки таблицы в виде объектов,
                 // где ключ - название столбца, значение - значение ячейки
-                let table = [];
                 for (let el of response.data.feed.entry) {
                   let rowContent = JSON.parse(
                     `{"${el.content.$t
@@ -39,12 +38,10 @@ const store = () => new Vuex.Store({
                       .split(", ")
                       .join('", "')}"}`
                   );
-                  table.push(rowContent);
+                  state.table.push(rowContent);
                 }
-                this.commit("setTableContent", table);
       
                 // Парсим инфо об ачивках
-                let achievements = {};
                 for (let key in state.table[0]) {
                   if (key != "name") {
                     let achievement = {};
@@ -54,27 +51,24 @@ const store = () => new Vuex.Store({
                     achievement.color = state.table[3][key];
                     achievement.max = state.table[4][key];
       
-                    achievements[key] = achievement;
+                    state.achievements[key] = achievement;
                   }
                 }
-                this.commit("setAchievements", achievements);
       
                 // Парсим данные о людях и представляем в удобной форме
                 let peoplePart = state.table.slice(state.achievesInfoRows);
-                let people = [];
                 for (let row of peoplePart) {
                   let person = {
                     name: row.name,
                     achievements: {},
-                  };
+                  }
                   for (let key in row) {
                     if (key != "name") {
                       person.achievements[key] = row[key];
                     }
                   }
-                  people.push(person);
+                  state.people.push(person);
                 }
-                this.commit("setPeople", people);
               });
           }
     }
