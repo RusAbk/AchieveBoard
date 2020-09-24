@@ -23,9 +23,7 @@
                           bottom overlap bordered>
                           <img :src="$store.state.achievements[title].img" />
                         </v-badge>
-                        <div v-else>
-                          <img :src="$store.state.achievements[title].img" />
-                        </div>
+                        <img v-else :src="$store.state.achievements[title].img" />
                       </div>
                     </template>
                     <strong>{{$store.state.achievements[title].title}}</strong>
